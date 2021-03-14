@@ -4,6 +4,7 @@ const _gravity: float = 2000.0
 const _lowered_jump_gravity: float = 1200.0
 const _shoot_velocity: float = 600.0
 var _velocity := Vector2()
+var has_daggers: bool = false
 
 var _bullets: int = 0
 
@@ -12,6 +13,8 @@ onready var _spring = $Spring
 var _lowered_gravity: bool = false
 
 func _shoot():
+	if not has_daggers:
+		return
 	if _bullets <= 0:
 		_bullets = 0
 		return
@@ -42,6 +45,7 @@ func _input(event):
 #			_spring._spring_constant = 200.0
 
 func _process(_delta):
+	$AmmoCounter.visible = has_daggers
 	$AmmoCounter.ammo = _bullets
 
 func _physics_process(delta: float):
@@ -56,7 +60,7 @@ func _physics_process(delta: float):
 	# gravity
 #	_velocity += Vector2(0, _gravity + _gravity_nudge) * delta # gravity
 	var effective_gravity: float = _gravity
-	if _lowered_gravity:
+	if _lowered_gravity and _velocity.y <= 0.0:
 		effective_gravity = _lowered_jump_gravity
 	_velocity += Vector2(0, effective_gravity) * delta # gravity
 	
